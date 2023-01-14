@@ -41,6 +41,7 @@ const storiesReducer = (state, action) => {
 const useStorageState = (key, initialState) => {
   const [value, setValue] = React.useState(
       localStorage.getItem(key) || initialState
+
   );
 
   React.useEffect(() => {
