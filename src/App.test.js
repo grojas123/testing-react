@@ -3,7 +3,7 @@ import {
     render,
     screen,
     fireEvent,
-    act,
+    act
 } from "@testing-library/react";
 import App,{
     storiesReducer,
@@ -118,12 +118,12 @@ describe('List',()=>{
         list:stories,
         onRemoveItem:jest.fn(),
     }
-test('renders the list',()=>{
+test('check if the list are in the document',()=>{
     render(<List {...listProps}/>);
     ///screen.debug();
    expect(screen.getByRole('list')).toBeInTheDocument()
 })
-    test('renders the list and check if 2 elements are present',()=>{
+    test('list and check if 2 elements are present',()=>{
         render(<List {...listProps}/>);
         expect(screen.getAllByRole('listitem').length).toStrictEqual(2)
     })
@@ -135,6 +135,13 @@ describe('InputWithLabel',()=>{
         value:"React",
         isFocused:true,
         onInputChange:jest.fn,
-        children:jest.fn
+        children:<strong>Search:</strong>
     }
+    test('check InputWithLabel',()=>{
+        render(<InputWithLabel {...inputWithLabelProps}/>);
+        //screen.logTestingPlaygroundURL()
+        //For debugging using testing-playground, screen exposes this convenient method
+        // which logs and returns a URL that can be opened in a browser.
+        expect(screen.getByRole('textbox', { name: /search:/i})).toBeInTheDocument();
+    });
 })
