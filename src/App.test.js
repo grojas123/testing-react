@@ -115,6 +115,15 @@ describe('SearchForm',()=>{
         fireEvent.submit(screen.getByRole('button'));
         expect(searchFormProps.onSearchSubmit).toHaveBeenCalledTimes(1);
     });
+    // This is example of Snapshot testing
+    // A snapshot test creates an instance of your rendered component’s output as HTML elements and their structure.
+    // This snapshot is compared to the same snapshot in the next test to give more output on how the rendered
+    // component changed and show why any tests failed in the difference.
+
+    test('renders snapshot of SearchForm ',() => {
+        const { container } = render(<SearchForm {...searchFormProps}/>);
+        expect(container.firstChild).toMatchSnapshot();
+    })
 });
 
 describe('List',()=>{
@@ -131,7 +140,10 @@ test('check if the list are in the document',()=>{
         render(<List {...listProps}/>);
         expect(screen.getAllByRole('listitem').length).toStrictEqual(2)
     })
-
+test('renders snapshot of list',()=>{
+    const {container} = render(<List {...listProps}/>);
+    expect(container.firstChild).toMatchSnapshot;
+})
 })
 describe('InputWithLabel',()=>{
     const inputWithLabelProps={
@@ -148,6 +160,10 @@ describe('InputWithLabel',()=>{
         // which logs and returns a URL that can be opened in a browser.
         expect(screen.getByRole('textbox', { name: /search:/i})).toBeInTheDocument();
     });
+    test('renders a snapshot of InputLabel',()=>{
+        const {container}=render(<InputWithLabel {...inputWithLabelProps}/>);
+        expect(container.firstChild).toMatchSnapshot;
+    })
 });
 // This code is integration test First the testing fetching .
 jest.mock('axios');
