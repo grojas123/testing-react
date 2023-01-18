@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`SearchForm renders snapshot 1`] = `
+exports[`SearchForm renders snapshot of SearchForm  1`] = `
 <form>
   <label
     for="search"

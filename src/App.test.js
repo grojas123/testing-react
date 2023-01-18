@@ -1,23 +1,37 @@
 import * as React from "react";
 import axios from "axios";
-
 import {
     render,
     screen,
     fireEvent,
-    act
+    act, waitFor
 } from "@testing-library/react";
+
 import App,{
     storiesReducer,
-
     Item,
     List,
     SearchForm,
     InputWithLabel
 } from './App';
-import promise from "promise";
-const storyOne = { title: 'React', url: 'https://reactjs.org/', author: 'Jordan Walke', num_comments: 3, points: 4, objectID: 0, };
-const storyTwo = { title: 'Redux', url: 'https://redux.js.org/', author: 'Dan Abramov, Andrew Clark', num_comments: 2, points: 5, objectID: 1, };
+
+jest.mock('axios');
+
+const storyOne = {
+    title: 'React',
+    url: 'https://reactjs.org/',
+    author: 'Jordan Walke',
+    num_comments: 3,
+    points: 4,
+    objectID: 0, };
+
+const storyTwo = {
+    title: 'Redux',
+    url: 'https://redux.js.org/',
+    author: 'Dan Abramov, Andrew Clark',
+    num_comments: 2,
+    points: 5,
+    objectID: 1, };
 
 const stories = [storyOne,storyTwo];
 // This a test of a function storiesReducer
@@ -63,7 +77,6 @@ describe('storiesReducer', () => {
 describe('Item',()=>{
     test('renders all properties',()=>{
         render(<Item item={storyOne}/>);
-        // use to see what was rendered of the element
         // screen.debug();
         expect(screen.getByText('Jordan Walke')).toBeInTheDocument();
         expect(screen.getByText('React')).toHaveAttribute(
@@ -74,13 +87,16 @@ describe('Item',()=>{
     });
     test('renders al clickable dismiss button',()=>{
         render(<Item item={storyOne}/>);
+
         expect(screen.getByRole('button')).toBeInTheDocument();
     })
-    test('clicking the dismiss button calls the callback handler',
-        ()=>{
+    test('clicking the dismiss button calls the callback handler',()=>{
         const handleRemoveItem = jest.fn();
+
         render(<Item item={storyOne} onRemoveItem={handleRemoveItem}/>);
+
         fireEvent.click(screen.getByRole('button'));
+
         expect(handleRemoveItem).toHaveBeenCalledTimes(1);
 
         });
@@ -166,47 +182,44 @@ describe('InputWithLabel',()=>{
     })
 });
 // This code is integration test First the testing fetching .
-jest.mock('axios');
+
 describe('App',()=>{
     test('success fetching data (happy path)',async ()=>{
         const promise = Promise.resolve({
             data: {
                 hits:stories,
             },
-        }
-
-        )
+        });
             axios.get.mockImplementationOnce(() => promise);
+
             render(<App/>);
             //screen.debug();
             expect(screen.queryByText(/Loading/)).toBeInTheDocument();
-
             await act(()=> promise);
-
             expect(screen.queryByText(/Loading/)).toBeNull();
             expect(screen.getByText('React')).toBeInTheDocument();
             expect(screen.getByText('Redux')).toBeInTheDocument();
-           expect(screen.getAllByText('Dismiss').length).toBe(2);
+            expect(screen.getAllByText('Dismiss').length).toBe(2);
 
     });
-    test('fails fetching data', async ()=>{
+    test('fails fetching data', async () => {
         const promise = Promise.reject();
 
         axios.get.mockImplementationOnce(()=> promise);
 
         render(<App/>);
-
+        ///screen.logTestingPlaygroundURL();
         expect(screen.getByText(/Loading/)).toBeInTheDocument();
 
         try {
-            await act(() => promise);
+            await waitFor( async () => await promise);
 
         } catch (error) {
+            //screen.logTestingPlaygroundURL();
             expect(screen.queryByText(/Loading/)).toBeNull();
             expect(screen.queryByText(/went wrong/)).toBeInTheDocument();
         }
-
-    })
+    });
     test('removes a story', async ()=>{
         const promise = Promise.resolve({
             data: {
